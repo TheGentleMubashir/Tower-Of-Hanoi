@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tower of Hanoi</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Game Container */
+    #game-container {
+      display: flex;
+      justify-content: space-between;
+      width: 80%;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    /* Pegs */
+    .peg {
+      width: 20px;
+      height: 200px;
+      background: #8B4513;
+      position: relative;
+      border-radius: 10px;
+      margin: 0 20px;
+    }
+
+    /* Disks */
+    .disk {
+      height: 20px;
+      background: #FFD700;
+      border: 2px solid #000;
+      border-radius: 10px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: all 0.3s ease;
+    }
+
+    /* Buttons */
+    #reset-button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 20px;
+    }
+
+    #reset-button:hover {
+      background: #45a049;
+    }
+
+    /* Status Text */
+    #status {
+      font-size: 1.2rem;
+      margin: 20px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tower of Hanoi</h1>
+  <div id="game-container">
+    <div class="peg" id="peg1"></div>
+    <div class="peg" id="peg2"></div>
+    <div class="peg" id="peg3"></div>
+  </div>
+  <p id="status">Move all disks to the last peg!</p>
+  <button id="reset-button">Reset Game</button>
+
+  <script>
+    // Game Variables
+    const pegs = [document.getElementById('peg1'), document.getElementById('peg2'), document.getElementById('peg3')];
+    const statusText = document.getElementById('status');
+    const resetButton = document.getElementById('reset-button');
+    let disks = [];
+    let selectedDisk = null;
+    let selectedPeg = null;
+
+    // Initialize Game
+    function initializeGame() {
+      // Clear all pegs
+      pegs.forEach(peg => (peg.innerHTML = ''));
+
+      // Create disks
+      disks = [
+        { width: 120, color: '#FFD700' },
+        { width: 100, color: '#FFA500' },
+        { width: 80, color: '#FF6347' },
+        { width: 60, color: '#FF4500' },
+      ];
+
+      // Add disks to the first peg
+      disks.forEach((disk, index) => {
+        const diskElement = document.createElement('div');
+        diskElement.className = 'disk';
+        diskElement.style.width = `${disk.width}px`;
+        diskElement.style.backgroundColor = disk.color;
+        diskElement.style.bottom = `${index * 25}px`;
+        diskElement.dataset.size = disks.length - index;
+        pegs[0].appendChild(diskElement);
+      });
+
+      // Reset game state
+      selectedDisk = null;
+      selectedPeg = null;
+      statusText.textContent = 'Move all disks to the last peg!';
+    }
+
+    // Handle Peg Click
+    pegs.forEach((peg, pegIndex) => {
+      peg.addEventListener('click', () => {
+        const disksOnPeg = peg.querySelectorAll('.disk');
+
+        if (!selectedDisk) {
+          // Select the top disk from the peg
+          if (disksOnPeg.length > 0) {
+            selectedDisk = disksOnPeg[disksOnPeg.length - 1];
+            selectedPeg = pegIndex;
+            statusText.textContent = `Selected disk from Peg ${pegIndex + 1}`;
+          }
+        } else {
+          // Move the selected disk to the clicked peg
+          const targetPeg = pegs[pegIndex];
+          const disksOnTargetPeg = targetPeg.querySelectorAll('.disk');
+          const topDiskOnTarget = disksOnTargetPeg.length > 0 ? disksOnTargetPeg[disksOnTargetPeg.length - 1] : null;
+
+          if (!topDiskOnTarget || parseInt(selectedDisk.dataset.size) < parseInt(topDiskOnTarget.dataset.size)) {
+            targetPeg.appendChild(selectedDisk);
+            selectedDisk = null;
+            selectedPeg = null;
+            statusText.textContent = 'Move all disks to the last peg!';
+
+            // Check if the game is won
+            if (pegs[2].querySelectorAll('.disk').length === disks.length) {
+              statusText.textContent = 'You win! 🎉';
+            }
+          } else {
+            statusText.textContent = 'Invalid move! Cannot place a larger disk on a smaller one.';
+          }
+        }
+      });
+    });
+
+    // Reset Game
+    resetButton.addEventListener('click', initializeGame);
+
+    // Start the game
+    initializeGame();
+  </script>
+</body>
+</html>
