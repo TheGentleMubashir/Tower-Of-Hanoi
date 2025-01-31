@@ -8,10 +8,7 @@ A classic puzzle game implemented in HTML, CSS, and JavaScript.
 3. You cannot place a larger disk on top of a smaller one.
 
 ## Live Demo
-[Play the game here!](https://your-username.github.io/tower-of-hanoi)
-
-## Screenshot
-![Screenshot](screenshot.png)
+[Play the game here!](https://thegentlemubashir.github.io/Tower-Of-Hanoi/)
 
 ## License
 This project is licensed under the MIT License.
